@@ -64,7 +64,8 @@ def bet_winner(timeStamp):
                               'dateTimeStamp': timeStamp,
                               'team1_tmp': change_name_to_tmp(bet['O1']),
                               'team2_tmp': change_name_to_tmp(bet['O2']),
-                              'league': bet['L']
+                              'league': bet['L'],
+                              'datetime': bet['S']
                          }
                          if len(bet['E']) == 2:
                               match['odds2'] = bet['E'][1]['C']
@@ -146,7 +147,7 @@ def sbotop(timeStamp):
                "MatchCnt": 500,
                "SortType": 1,
                "HasLive": False,
-               "Token": "2c4613427e62e0acf43d7cb9ddcdf840",
+               "Token": "faa15e744ddb849d0515bb04d241fc06",
                "Language": "vn",
                "BettingChannel": 1
           }
@@ -206,7 +207,8 @@ def send_notice():
                          'odds1': '$odds1',
                          'odds2': '$odds2',
                          'site': '$site',
-                         'league': 1
+                         'league': 1,
+                         'datetime': 1
                     }
                }, {
                     '$group': {
@@ -322,7 +324,7 @@ def data_to_string(data):
      if data.get('odds2') is not None:
           string = string + ', odds2: ' + str(data.get('odds2'))
      if data['site'] == 'BETWINNER':
-          string = string + ', league: ' + data['league']
+          string = string + ', league: ' + data['league'] + ' , datetime: ' + datetime.fromtimestamp(int(data.get('datetime')), tz=timezone.utc).strftime("%d/%m/%Y, %H:%M:%S")
      return string
 
 def change_name_to_tmp(team):

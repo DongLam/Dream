@@ -15,4 +15,5 @@ class MatchSerializer(serializers.ModelSerializer):
                     'dateTimeStamp',
                     'team1_tmp',
                     'team2_tmp',
-                    'league')
+                    'league',
+                    'datetime')

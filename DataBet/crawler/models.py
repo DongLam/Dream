@@ -15,6 +15,7 @@ class Match(models.Model):
     team1_tmp = models.CharField(max_length=50, blank=True)
     team2_tmp = models.CharField(max_length=50, blank=True)
     league = models.CharField(max_length=100, blank=True)
+    datetime = models.CharField(max_length=100, blank=True)
 
     class Meta:
         ordering = ['team1']

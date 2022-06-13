@@ -26,7 +26,7 @@ def crawl_task():
     # egb(timeStamp)
     sbotop(timeStamp)
     bet_winner(timeStamp)
-    ps38(timeStamp)
+    # ps38(timeStamp)
     # detect_exception()
     send_notice()
 
