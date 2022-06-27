@@ -6,6 +6,7 @@ BET_WINNER_URL = 'https://betwinner1.com/LineFeed/Get1x2_VZip?sports=40&count=10
 TELE_BOT_TOKEN = '2116690014:AAESHuHCYk8N4rX-zcKM5O9eDmqmSg6nHO0'
 PS38_URL = 'https://www.ps3838.com/sports-service/sv/compact/events?l=3&lv=&me=0&mk=1&sp=12&locale=en_US'
 TELE_CHAT_ID = '-679034976'
+TELE_CHAT_ID_2 = '-694328994'
 SPOTOP = 'https://esport.sbotop.com/api/GetIndexMatch'
 
 BW_CSGO = 'CS:GO'

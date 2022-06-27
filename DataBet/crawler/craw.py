@@ -5,7 +5,7 @@ import pymongo
 from crawler import constants
 from crawler.Serializer.Serializer import MatchSerializer
 from crawler.constants import *
-from crawler.tele_bot import send_message
+from crawler.tele_bot import send_message, send_message_bo2
 
 
 def egb(timeStamp):
@@ -70,7 +70,8 @@ def bet_winner(timeStamp):
                          if len(bet['E']) == 2:
                               match['odds2'] = bet['E'][1]['C']
                          else:
-                              continue
+                              match['odds2'] = bet['E'][2]['C']
+                              match['type'] = 1
                          match = sort_team_name(match)
                          matchSerializer = MatchSerializer(data=match)
 
@@ -147,7 +148,7 @@ def sbotop(timeStamp):
                "MatchCnt": 500,
                "SortType": 1,
                "HasLive": False,
-               "Token": "faa15e744ddb849d0515bb04d241fc06",
+               "Token": "07b45515c1505eafcf80cdb9aa455ee9",
                "Language": "vn",
                "BettingChannel": 1
           }
@@ -208,7 +209,8 @@ def send_notice():
                          'odds2': '$odds2',
                          'site': '$site',
                          'league': 1,
-                         'datetime': 1
+                         'datetime': 1,
+                         'type': 1
                     }
                }, {
                     '$group': {
@@ -313,8 +315,10 @@ def send_notice():
           str_send = "game: " + item['_id']['z'] + " value = " + str(value) + "\n"
           for i in arrays:
                str_send = str_send + i['site'] +':\n\t ' + data_to_string(i) + "\n"
-
-          send_message(str_send)
+          if i['type'] == 1:
+               send_message_bo2(str_send)
+          else:
+               send_message(str_send)
           print(str_send)
 
 def data_to_string(data):
