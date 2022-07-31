@@ -1,6 +1,6 @@
 import telegram
 
-from crawler.constants import TELE_BOT_TOKEN, TELE_CHAT_ID
+from crawler.constants import TELE_BOT_TOKEN, TELE_CHAT_ID, TELE_CHAT_ID_2
 
 
 def send_message(message):

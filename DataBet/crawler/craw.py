@@ -69,9 +69,9 @@ def bet_winner(timeStamp):
                          }
                          if len(bet['E']) == 2:
                               match['odds2'] = bet['E'][1]['C']
-                         else:
-                              match['odds2'] = bet['E'][2]['C']
-                              match['type'] = 1
+                         # else:
+                         #      match['odds2'] = bet['E'][2]['C']
+                         #      match['type'] = 1
                          match = sort_team_name(match)
                          matchSerializer = MatchSerializer(data=match)
 
@@ -148,7 +148,7 @@ def sbotop(timeStamp):
                "MatchCnt": 500,
                "SortType": 1,
                "HasLive": False,
-               "Token": "07b45515c1505eafcf80cdb9aa455ee9",
+               "Token": "254d6f1f2cf87f09ba69123fb8071e39",
                "Language": "vn",
                "BettingChannel": 1
           }
@@ -290,7 +290,7 @@ def send_notice():
                },{
                     '$match': {
                          'e': {
-                              '$gt': 1.1
+                              '$gt': 1.2
                          }
                     }
                }, {
