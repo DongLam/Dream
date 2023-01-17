@@ -148,7 +148,7 @@ def sbotop(timeStamp):
                "MatchCnt": 500,
                "SortType": 1,
                "HasLive": False,
-               "Token": "254d6f1f2cf87f09ba69123fb8071e39",
+               "Token": "21f8a3869d1182272a8fa8b0bfefd39e",
                "Language": "vn",
                "BettingChannel": 1
           }
@@ -188,8 +188,64 @@ def sbotop(timeStamp):
      except Exception as e:
           print(e)
 
+def stake(timeStamp):
+     try:
+          print("-----------STAKE----------------")
+          url = constants.STAKE_URL
+          payload = stake_payload("league-of-legends")
+          headers={
+               "Accept": "application/json",
+               "Cookie": "__cf_bm=AVxfXV1FUXwU3ulGqHpJRHLCwPUQXHJuold0kqN7haM-1671417624-0-AWo+ZrtcMI3rvzOkRZ+a7q44Fs8EvsYOOZ1Y5ASiFUyV2Kdx/F/Lbos3gUew+4Z8N9xNTMDzGPliyR+aw9VxwDE=; cf_clearance=lEN_EWT7VSCVSSdkV4dfiW1zb02jxhWJgREigePC750-1671417660-0-160; session_info=undefined; currency_currency=btc; currency_hideZeroBalances=false; currency_currencyView=crypto; currency_bankingCurrencies=[]; cookie_consent=false; leftSidebarView_v2=expanded; sidebarView=hidden; casinoSearch=[]; sportsSearch=[]; oddsFormat=decimal; sportMarketGroupMap={}; locale=vi; _ga=GA1.2.514902993.1671417664; _gid=GA1.2.318262681.1671417664; intercom-id-cx1ywgf2=46fbc4a9-d005-4a44-89fd-bdf7ff485d99; intercom-session-cx1ywgf2=; intercom-device-id-cx1ywgf2=744c1efa-df8b-4f54-a942-f0d777e0b68f; _sp_srt_ses.4830=*; mp_e29e8d653fb046aa5a7d7b151ecf6f99_mixpanel=%7B%22distinct_id%22%3A%20%2218528419377462-08e0a7178cadb2-26021151-240000-18528419378836%22%2C%22%24device_id%22%3A%20%2218528419377462-08e0a7178cadb2-26021151-240000-18528419378836%22%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fstake.games%2F%3F__cf_chl_tk%3D9ewgHwcbVySgYWGa8eeb4NJkCnlHNfGYEKc1Bi8du40-1671417659-0-gaNycGzNB5E%22%2C%22%24initial_referring_domain%22%3A%20%22stake.games%22%7D; _sp_srt_id.4830=d3e772cd-68e5-42e8-9aee-a3b4d34b0f4a.1671417785.1.1671417844.1671417785.983a8f9f-221d-4c8a-a036-f512a448ad79",
+               "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+          }
+          response = requests.post(url, headers=headers, json = payload)
+          bets = response.json()['data']["slugSport"]["fixtureList"]
+          i = 0
+          for bet in bets:
+               try:
+                    game = BET_LOL
+                    lgs = bet['groups']
+                    for lg in lgs:
+                         matches = lg['templates']
+                         for match in matches:
+                              markets = match["markets"]
+                              for market in markets:
+                                   outcomes = market["outcomes"]
+                                   tmp = {
+                                        'team1': outcomes[0]['name'],
+                                        'team2': outcomes[1]['name'],
+                                        'odds1': outcomes[0]['odds'],
+                                        'odds2': outcomes[1]['odds'],
+                                        'site': constants.STAKE,
+                                        'game': game,
+                                        'dateTimeStamp': timeStamp,
+                                        'team1_tmp': change_name_to_tmp(outcomes[0]['name']),
+                                        'team2_tmp': change_name_to_tmp(outcomes[1]['name'])
+                                   }
+                                   tmp = sort_team_name(tmp)
+                                   matchSerializer = MatchSerializer(data=tmp)
 
+                                   if matchSerializer.is_valid():
+                                        matchSerializer.save()
+                                        i = i + 1
+               except Exception as e:
+                    print(e)
+          print("Done STAKE: " + str(i))
+     except Exception as e:
+          print(e)
 
+def stake_payload(game):
+     data = {
+          "query": "query SlugSportFixtureList($type: SportSearchEnum!, $sport: String!, $groups: String!, $limit: Int!, $offset: Int!) {\n  slugSport(sport: $sport) {\n    id\n    name\n    fixtureCount(type: $type)\n    templates(group: $groups) {\n      id\n      name\n      extId\n    }\n    fixtureList(type: $type, limit: $limit, offset: $offset) {\n      ...FixturePreview\n      groups(groups: [$groups], status: [active, suspended, deactivated]) {\n        ...SportGroupTemplates\n      }\n    }\n  }\n}\n\nfragment FixturePreview on SportFixture {\n  id\n  ...SportFixtureLiveStreamExists\n  status\n  slug\n  marketCount(status: [active, suspended])\n  extId\n  data {\n    __typename\n    ...SportFixtureDataMatch\n    ...SportFixtureDataOutright\n  }\n  tournament {\n    ...TournamentTreeNested\n  }\n  eventStatus {\n    ...SportFixtureEventStatus\n  }\n}\n\nfragment SportFixtureLiveStreamExists on SportFixture {\n  id\n  betradarStream {\n    exists\n  }\n  imgArenaStream {\n    exists\n  }\n  abiosStream {\n    exists\n    stream {\n      startTime\n      id\n    }\n  }\n  geniussportsStream(deliveryType: hls) {\n    exists\n  }\n}\n\nfragment SportFixtureDataMatch on SportFixtureDataMatch {\n  startTime\n  competitors {\n    ...SportFixtureCompetitor\n  }\n  __typename\n}\n\nfragment SportFixtureCompetitor on SportFixtureCompetitor {\n  name\n  extId\n  countryCode\n  abbreviation\n}\n\nfragment SportFixtureDataOutright on SportFixtureDataOutright {\n  name\n  startTime\n  endTime\n  __typename\n}\n\nfragment TournamentTreeNested on SportTournament {\n  id\n  name\n  slug\n  category {\n    ...CategoryTreeNested\n  }\n}\n\nfragment CategoryTreeNested on SportCategory {\n  id\n  name\n  slug\n  sport {\n    id\n    name\n    slug\n  }\n}\n\nfragment SportFixtureEventStatus on SportFixtureEventStatus {\n  homeScore\n  awayScore\n  matchStatus\n  clock {\n    matchTime\n    remainingTime\n  }\n  periodScores {\n    homeScore\n    awayScore\n    matchStatus\n  }\n  currentServer {\n    extId\n  }\n  homeGameScore\n  awayGameScore\n  statistic {\n    yellowCards {\n      away\n      home\n    }\n    redCards {\n      away\n      home\n    }\n    corners {\n      home\n      away\n    }\n  }\n}\n\nfragment SportGroupTemplates on SportGroup {\n  ...SportGroup\n  templates(limit: 3, includeEmpty: true) {\n    ...SportGroupTemplate\n    markets(limit: 1) {\n      ...SportMarket\n      outcomes {\n        ...SportMarketOutcome\n      }\n    }\n  }\n}\n\nfragment SportGroup on SportGroup {\n  name\n  translation\n  rank\n}\n\nfragment SportGroupTemplate on SportGroupTemplate {\n  extId\n  rank\n  name\n}\n\nfragment SportMarket on SportMarket {\n  id\n  name\n  status\n  extId\n  specifiers\n  customBetAvailable\n}\n\nfragment SportMarketOutcome on SportMarketOutcome {\n  active\n  id\n  odds\n  name\n  customBetAvailable\n}\n",
+          "variables": {
+               "type": "upcoming",
+               "limit": 50,
+               "offset": 0,
+               "groups": "winner",
+               "sport": game
+          }
+     }
+     return data
 
 def send_notice():
      query = [
@@ -315,10 +371,11 @@ def send_notice():
           str_send = "game: " + item['_id']['z'] + " value = " + str(value) + "\n"
           for i in arrays:
                str_send = str_send + i['site'] +':\n\t ' + data_to_string(i) + "\n"
-          if i['type'] == 1:
-               send_message_bo2(str_send)
-          else:
-               send_message(str_send)
+          send_message_bo2(str_send)
+          # if i['type'] == 1:
+          #      send_message_bo2(str_send)
+          # else:
+          #      send_message(str_send)
           print(str_send)
 
 def data_to_string(data):

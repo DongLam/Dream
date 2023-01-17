@@ -2,6 +2,7 @@ EGB = 'EGB'
 BET_WINNER = 'BETWINNER'
 PS38 = 'PS38'
 SBOTOP = 'SBOTOP'
+STAKE = "STAKE"
 BET_WINNER_URL = 'https://betwinner.com/service-api/LineFeed/Get1x2_VZip?sports=40&count=500&lng=vi&mode=4&country=43&partner=152&getEmpty=true&virtualSports=true'
 TELE_BOT_TOKEN = '2116690014:AAESHuHCYk8N4rX-zcKM5O9eDmqmSg6nHO0'
 PS38_URL = 'https://www.ps3838.com/sports-service/sv/compact/events?l=3&lv=&me=0&mk=1&sp=12&locale=en_US'
@@ -62,3 +63,13 @@ MANUAL_NAME = [['LDLCOL', 'LDLC'], ['UNICORNSOFLOVESEXYED', 'UNICORNSOFLOVESE'],
                ['SOLOMID', 'TSM'], ['SOLOMIDACADEMY', 'TSMACADEMY'], ['UNICORNSOFLOVESEXYEDITION', 'UNICORNSOFLOVESE'],
                ['DYNAMOECLOT','ECLOT']]
 
+STAKE_URL = "https://stake.games/_api/graphql"
+
+STAKE_CSGO = 'CS:GO'
+STAKE_LOL = 'LEAGUE OF LEGENDS'
+STAKE_STAR_CRAFT = 'STARCRAFT2'
+STAKE_DOTA2 = 'DOTA2'
+STAKE_KOG = 'King of Glory'
+STAKE_VAL = 'Valorant'
+STAKE_PUBG = 'PUBG'
+STAKE_AOR = 'ArenaOfValor'
