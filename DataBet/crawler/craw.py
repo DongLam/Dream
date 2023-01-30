@@ -6,7 +6,7 @@ from crawler import constants
 from crawler.Serializer.Serializer import MatchSerializer
 from crawler.constants import *
 from crawler.tele_bot import send_message, send_message_bo2
-
+import time
 
 def egb(timeStamp):
      try:
@@ -192,47 +192,61 @@ def stake(timeStamp):
      try:
           print("-----------STAKE----------------")
           url = constants.STAKE_URL
-          payload = stake_payload("league-of-legends")
+          games = ["league-of-legends", "dota-2", "counter-strike"]
           headers={
                "Accept": "application/json",
-               "Cookie": "__cf_bm=AVxfXV1FUXwU3ulGqHpJRHLCwPUQXHJuold0kqN7haM-1671417624-0-AWo+ZrtcMI3rvzOkRZ+a7q44Fs8EvsYOOZ1Y5ASiFUyV2Kdx/F/Lbos3gUew+4Z8N9xNTMDzGPliyR+aw9VxwDE=; cf_clearance=lEN_EWT7VSCVSSdkV4dfiW1zb02jxhWJgREigePC750-1671417660-0-160; session_info=undefined; currency_currency=btc; currency_hideZeroBalances=false; currency_currencyView=crypto; currency_bankingCurrencies=[]; cookie_consent=false; leftSidebarView_v2=expanded; sidebarView=hidden; casinoSearch=[]; sportsSearch=[]; oddsFormat=decimal; sportMarketGroupMap={}; locale=vi; _ga=GA1.2.514902993.1671417664; _gid=GA1.2.318262681.1671417664; intercom-id-cx1ywgf2=46fbc4a9-d005-4a44-89fd-bdf7ff485d99; intercom-session-cx1ywgf2=; intercom-device-id-cx1ywgf2=744c1efa-df8b-4f54-a942-f0d777e0b68f; _sp_srt_ses.4830=*; mp_e29e8d653fb046aa5a7d7b151ecf6f99_mixpanel=%7B%22distinct_id%22%3A%20%2218528419377462-08e0a7178cadb2-26021151-240000-18528419378836%22%2C%22%24device_id%22%3A%20%2218528419377462-08e0a7178cadb2-26021151-240000-18528419378836%22%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fstake.games%2F%3F__cf_chl_tk%3D9ewgHwcbVySgYWGa8eeb4NJkCnlHNfGYEKc1Bi8du40-1671417659-0-gaNycGzNB5E%22%2C%22%24initial_referring_domain%22%3A%20%22stake.games%22%7D; _sp_srt_id.4830=d3e772cd-68e5-42e8-9aee-a3b4d34b0f4a.1671417785.1.1671417844.1671417785.983a8f9f-221d-4c8a-a036-f512a448ad79",
                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
           }
-          response = requests.post(url, headers=headers, json = payload)
-          bets = response.json()['data']["slugSport"]["fixtureList"]
-          i = 0
-          for bet in bets:
-               try:
-                    game = BET_LOL
-                    lgs = bet['groups']
-                    for lg in lgs:
-                         matches = lg['templates']
-                         for match in matches:
-                              markets = match["markets"]
-                              for market in markets:
-                                   outcomes = market["outcomes"]
-                                   tmp = {
-                                        'team1': outcomes[0]['name'],
-                                        'team2': outcomes[1]['name'],
-                                        'odds1': outcomes[0]['odds'],
-                                        'odds2': outcomes[1]['odds'],
-                                        'site': constants.STAKE,
-                                        'game': game,
-                                        'dateTimeStamp': timeStamp,
-                                        'team1_tmp': change_name_to_tmp(outcomes[0]['name']),
-                                        'team2_tmp': change_name_to_tmp(outcomes[1]['name'])
-                                   }
-                                   tmp = sort_team_name(tmp)
-                                   matchSerializer = MatchSerializer(data=tmp)
 
-                                   if matchSerializer.is_valid():
-                                        matchSerializer.save()
-                                        i = i + 1
-               except Exception as e:
-                    print(e)
-          print("Done STAKE: " + str(i))
+          payload_lol = stake_payload("league-of-legends")
+          response_lol = requests.post(url, headers=headers, json = payload_lol)
+          bets_lol = response_lol.json()['data']["slugSport"]["fixtureList"]
+          save_stake(BET_LOL, bets_lol, timeStamp)
+          time.sleep(30)
+          payload_dota = stake_payload("dota-2")
+          response_dota = requests.post(url, headers=headers, json = payload_dota)
+          bets_dota = response_dota.json()['data']["slugSport"]["fixtureList"]
+          save_stake(BET_DOTA2, bets_dota, timeStamp)
+          time.sleep(30)
+          payload_csgo = stake_payload("counter-strike")
+          response_csgo = requests.post(url, headers=headers, json = payload_csgo)
+          bets_csgo = response_csgo.json()['data']["slugSport"]["fixtureList"]
+          save_stake(BET_CSGO, bets_csgo, timeStamp)
+          
      except Exception as e:
           print(e)
+
+def save_stake(game, bets, timeStamp):
+     i = 0
+     for bet in bets:
+          try:
+               game = game
+               lgs = bet['groups']
+               for lg in lgs:
+                    matches = lg['templates']
+                    for match in matches:
+                         markets = match["markets"]
+                         for market in markets:
+                              outcomes = market["outcomes"]
+                              tmp = {
+                                   'team1': outcomes[0]['name'],
+                                   'team2': outcomes[1]['name'],
+                                   'odds1': outcomes[0]['odds'],
+                                   'odds2': outcomes[1]['odds'],
+                                   'site': constants.STAKE,
+                                   'game': game,
+                                   'dateTimeStamp': timeStamp,
+                                   'team1_tmp': change_name_to_tmp(outcomes[0]['name']),
+                                   'team2_tmp': change_name_to_tmp(outcomes[1]['name'])
+                              }
+                              tmp = sort_team_name(tmp)
+                              matchSerializer = MatchSerializer(data=tmp)
+                              if matchSerializer.is_valid():
+                                   matchSerializer.save()
+                                   i = i + 1
+          except Exception as e:
+                         print(e)
+     print("Done STAKE: " + str(i))
 
 def stake_payload(game):
      data = {
