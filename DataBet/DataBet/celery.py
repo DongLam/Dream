@@ -30,7 +30,7 @@ app.conf.beat_schedule = {
     # },
     "crawl_task": {
         "task": "crawler.tasks.crawl_task",
-        "schedule": crontab(minute='*/2')
+        "schedule": crontab(minute='*/5')
     },
     # "send_notice": {
     #     "task": "crawler.tasks.send_notice_task",

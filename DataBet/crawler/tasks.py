@@ -2,7 +2,7 @@ from datetime import datetime
 
 from celery import shared_task
 
-from crawler.craw import egb, bet_winner, ps38, send_notice, sbotop, stake
+from crawler.craw import egb, bet_winner, ps38, send_notice, sbotop, stake_lol, stake_csgo
 from crawler.detect import detect, lam, detect_exception
 from crawler.export import remove_data
 from crawler.tele_bot import send_message
@@ -24,9 +24,10 @@ def crawl_task():
     remove_data()
     timeStamp = datetime.now()
     # egb(timeStamp)
-    sbotop(timeStamp)
+    # sbotop(timeStamp)
     bet_winner(timeStamp)
-    stake(timeStamp)
+    stake_lol(timeStamp)
+    stake_csgo(timeStamp)
     # ps38(timeStamp)
     # detect_exception()
     send_notice()

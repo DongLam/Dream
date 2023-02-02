@@ -1,2 +1,6 @@
 venv/
 Lib/
+.idea
+**/__pycache__/
+DataBet/__pycache__
+.dat
